@@ -6,7 +6,8 @@
     "hl": "en-US",
     "gl": "US",
     "ceid": "US:en",
-    "count": 6
+    "count": 6,
+    "translate": true
   },
   {
     "id": "econ-global",
@@ -15,7 +16,8 @@
     "hl": "en-US",
     "gl": "US",
     "ceid": "US:en",
-    "count": 6
+    "count": 6,
+    "translate": true
   },
   {
     "id": "econ-domestic",
