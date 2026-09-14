@@ -116,7 +116,7 @@ export default function Home() {
               <ul className="space-y-3">
                 {topic.items.map((item, i) => (
                   <li key={i} className="text-sm">
-                    
+                    <a
                       href={item.link}
                       target="_blank"
                       rel="noreferrer"
