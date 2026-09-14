@@ -6,13 +6,13 @@
 }
 
 @theme inline {
-  /* Double typography without scaling spacing or layout widths. */
-  --text-xs: 1.5rem;
-  --text-sm: 1.75rem;
-  --text-xl: 2.5rem;
-  --text-3xl: 3.75rem;
-  --text-4xl: 4.5rem;
-  --text-5xl: 6rem;
+  /* Comfortable reading sizes, with a compact mobile heading. */
+  --text-xs: 0.875rem;
+  --text-sm: 0.9375rem;
+  --text-xl: 1.25rem;
+  --text-3xl: 2rem;
+  --text-4xl: 1.75rem;
+  --text-5xl: 2.25rem;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 }
@@ -31,11 +31,12 @@ body {
 }
 
 main {
-  font-size: 2rem;
+  font-size: 1rem;
   overflow-wrap: anywhere;
 }
 
-/* Article titles previously used a fixed 15px utility. */
+/* Keep article titles larger than supporting text for phone reading. */
 main li > a {
-  font-size: 1.875rem;
+  font-size: 1.125rem;
+  line-height: 1.6;
 }
