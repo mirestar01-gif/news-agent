@@ -6,6 +6,13 @@
 }
 
 @theme inline {
+  /* Double typography without scaling spacing or layout widths. */
+  --text-xs: 1.5rem;
+  --text-sm: 1.75rem;
+  --text-xl: 2.5rem;
+  --text-3xl: 3.75rem;
+  --text-4xl: 4.5rem;
+  --text-5xl: 6rem;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 }
@@ -21,4 +28,14 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+main {
+  font-size: 2rem;
+  overflow-wrap: anywhere;
+}
+
+/* Article titles previously used a fixed 15px utility. */
+main li > a {
+  font-size: 1.875rem;
 }
