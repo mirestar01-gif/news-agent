@@ -7,6 +7,7 @@ type NewsItem = {
   link: string;
   pubDate: string;
   source: string;
+  originalTitle?: string;
 };
 
 type Topic = {
@@ -15,6 +16,7 @@ type Topic = {
   items: NewsItem[];
   error: string | null;
   showRate?: boolean;
+  translate?: boolean;
 };
 
 type FxRate = {
@@ -114,7 +116,7 @@ export default function Home() {
               <ul className="space-y-3">
                 {topic.items.map((item, i) => (
                   <li key={i} className="text-sm">
-                    <a
+                    
                       href={item.link}
                       target="_blank"
                       rel="noreferrer"
@@ -122,6 +124,11 @@ export default function Home() {
                     >
                       {item.title}
                     </a>
+                    {item.originalTitle && (
+                      <p className="mt-0.5 text-xs text-neutral-400 italic">
+                        {item.originalTitle}
+                      </p>
+                    )}
                     <p className="mt-0.5 text-xs text-neutral-400">
                       {item.source}
                       {item.pubDate ? ` · ${formatDate(item.pubDate)}` : ""}
