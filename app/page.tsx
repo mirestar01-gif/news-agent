@@ -32,11 +32,34 @@ type ApiResponse = {
   topics: Topic[];
 };
 
+const TOPIC_ACCENT: Record<string, { bar: string; dot: string; tint: string }> = {
+  "ai-global": { bar: "border-[#5B4B8A]", dot: "bg-[#5B4B8A]", tint: "text-[#5B4B8A]" },
+  "econ-global": { bar: "border-[#9C5A1D]", dot: "bg-[#9C5A1D]", tint: "text-[#9C5A1D]" },
+  "econ-domestic": { bar: "border-[#1D6FA5]", dot: "bg-[#1D6FA5]", tint: "text-[#1D6FA5]" },
+  "fx-usdkrw": { bar: "border-[#1F7A5C]", dot: "bg-[#1F7A5C]", tint: "text-[#1F7A5C]" },
+};
+const DEFAULT_ACCENT = { bar: "border-[#6B5B4B]", dot: "bg-[#6B5B4B]", tint: "text-[#6B5B4B]" };
+
 function formatDate(iso: string) {
   try {
     return new Date(iso).toLocaleString("ko-KR", {
       month: "long",
       day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  } catch {
+    return iso;
+  }
+}
+
+function formatDateline(iso: string) {
+  try {
+    return new Date(iso).toLocaleString("ko-KR", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      weekday: "long",
       hour: "2-digit",
       minute: "2-digit",
     });
@@ -62,85 +85,93 @@ export default function Home() {
   }, [load]);
 
   return (
-    <main className="min-h-screen bg-neutral-50 px-4 py-8 sm:px-8">
-      <div className="mx-auto max-w-5xl">
-        <header className="mb-8 flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <h1 className="text-2xl font-bold text-neutral-900">
-              오늘의 뉴스 브리핑
-            </h1>
-            {data && (
-              <p className="mt-1 text-sm text-neutral-500">
-                업데이트: {formatDate(data.generatedAt)}
-              </p>
-            )}
+    <main className="min-h-screen bg-[#FAF6EF] text-[#262220]">
+      <div className="mx-auto max-w-5xl px-5 py-10 sm:px-8">
+        <header className="mb-8 border-b-2 border-[#262220] pb-5">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
+                오늘의 뉴스 브리핑
+              </h1>
+              {data && (
+                <p className="mt-2 text-sm text-[#8A7F6E]">
+                  {formatDateline(data.generatedAt)} 업데이트
+                </p>
+              )}
+            </div>
+            <button
+              onClick={load}
+              className="rounded-full border border-[#262220] px-4 py-1.5 text-sm font-medium text-[#262220] transition hover:bg-[#262220] hover:text-[#FAF6EF]"
+            >
+              새로고침
+            </button>
           </div>
-          <button
-            onClick={load}
-            className="rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
-          >
-            새로고침
-          </button>
         </header>
 
         {data?.fx && (
-          <div className="mb-6 rounded-xl border border-neutral-200 bg-white p-4 shadow-sm">
-            <p className="text-sm text-neutral-500">USD/KRW 기준 환율</p>
-            <p className="text-2xl font-semibold text-neutral-900">
+          <div className="mb-10 flex flex-wrap items-baseline gap-x-4 gap-y-1 rounded-lg border border-[#1F7A5C]/30 bg-[#1F7A5C]/[0.06] px-5 py-4">
+            <span className="text-sm font-medium text-[#1F7A5C]">
+              USD/KRW 기준 환율
+            </span>
+            <span className="text-3xl font-bold text-[#1F7A5C]">
               {data.fx.rate.toFixed(2)}원
-              <span className="ml-2 text-sm font-normal text-neutral-400">
-                ({data.fx.date} 기준)
-              </span>
-            </p>
+            </span>
+            <span className="text-sm text-[#8A7F6E]">({data.fx.date} 기준)</span>
           </div>
         )}
 
         {loading && (
-          <p className="text-neutral-500">뉴스를 불러오는 중입니다...</p>
+          <p className="mb-6 text-[#8A7F6E]">뉴스를 불러오는 중입니다...</p>
         )}
 
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-          {data?.topics.map((topic) => (
-            <section
-              key={topic.id}
-              className="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm"
-            >
-              <h2 className="mb-3 text-lg font-semibold text-neutral-900">
-                {topic.label}
-              </h2>
+        <div className="grid grid-cols-1 gap-x-10 gap-y-10 md:grid-cols-2">
+          {data?.topics.map((topic) => {
+            const accent = TOPIC_ACCENT[topic.id] ?? DEFAULT_ACCENT;
+            return (
+              <section key={topic.id} className={`border-t-4 ${accent.bar} pt-4`}>
+                <h2 className="mb-4 flex items-center gap-2 text-xl font-bold">
+                  <span className={`h-2.5 w-2.5 rounded-full ${accent.dot}`} />
+                  {topic.label}
+                </h2>
 
-              {topic.error && (
-                <p className="text-sm text-red-500">{topic.error}</p>
-              )}
+                {topic.error && (
+                  <p className="text-sm text-red-600">{topic.error}</p>
+                )}
 
-              <ul className="space-y-3">
-                {topic.items.map((item, i) => (
-                  <li key={i} className="text-sm">
-                    <a
-                      href={item.link}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="font-medium text-neutral-800 hover:underline"
-                    >
-                      {item.title}
-                    </a>
-                    {item.originalTitle && (
-                      <p className="mt-0.5 text-xs text-neutral-400 italic">
-                        {item.originalTitle}
+                <ul className="divide-y divide-[#E4DDD0]">
+                  {topic.items.map((item, i) => (
+                    <li key={i} className="py-3 first:pt-0">
+                      
+                        href={item.link}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-[15px] font-medium leading-snug text-[#262220] hover:underline"
+                      >
+                        {item.title}
+                      </a>
+                      {item.originalTitle && (
+                        <p className="mt-1 text-xs italic text-[#A69C8C]">
+                          {item.originalTitle}
+                        </p>
+                      )}
+                      <p className={`mt-1 text-xs font-medium ${accent.tint}`}>
+                        {item.source}
+                        {item.pubDate ? (
+                          <span className="font-normal text-[#8A7F6E]">
+                            {" "}
+                            · {formatDate(item.pubDate)}
+                          </span>
+                        ) : null}
                       </p>
-                    )}
-                    <p className="mt-0.5 text-xs text-neutral-400">
-                      {item.source}
-                      {item.pubDate ? ` · ${formatDate(item.pubDate)}` : ""}
-                    </p>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ))}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            );
+          })}
         </div>
 
-        <footer className="mt-10 text-center text-xs text-neutral-400">
+        <footer className="mt-14 border-t border-[#E4DDD0] pt-6 text-center text-xs text-[#A69C8C]">
           Google News RSS · Frankfurter 환율 API — 모두 무료 공개 API,
           별도 유료 API 키 없이 동작합니다.
         </footer>
